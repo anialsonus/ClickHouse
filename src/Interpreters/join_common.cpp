@@ -15,7 +15,6 @@
 #include <Interpreters/ActionsDAG.h>
 #include <Interpreters/TableJoin.h>
 
-#include <common/logger_useful.h>
 namespace DB
 {
 
@@ -127,6 +126,22 @@ void convertColumnsToNullable(Block & block, size_t starting_pos)
 {
     for (size_t i = starting_pos; i < block.columns(); ++i)
         convertColumnToNullable(block.getByPosition(i));
+}
+
+void convertColumnsToNullable(MutableColumns & mutable_columns, size_t starting_pos)
+{
+    for (size_t i = starting_pos; i < mutable_columns.size(); ++i)
+    {
+        ColumnPtr column = std::move(mutable_columns[i]);
+        column = makeNullable(column);
+        mutable_columns[i] = IColumn::mutate(std::move(column));
+
+        // changeNullability(mutable_columns[i]);
+        // mutable_columns[i]->type = convertTypeToNullable(mutable_columns[i]->type);
+
+        // convertColumnToNullable(*mutable_columns[i]);
+    }
+
 }
 
 /// @warning It assumes that every NULL has default value in nested column (or it does not matter)
@@ -431,18 +446,21 @@ ColumnPtr getColumnAsMask(const Block & block, const String & column_name)
 }
 
 
-void splitAdditionalColumns(const Names & key_names, const Block & sample_block, Block & block_keys, Block & block_others)
+void splitAdditionalColumns(const NamesVector & key_names, const Block & sample_block, Block & block_keys, Block & block_others)
 {
     block_others = materializeBlock(sample_block);
 
-    for (const String & column_name : key_names)
+    for (const auto & key_names_part : key_names)
     {
-        /// Extract right keys with correct keys order. There could be the same key names.
-        if (!block_keys.has(column_name))
+        for (const String & column_name : key_names_part)
         {
-            auto & col = block_others.getByName(column_name);
-            block_keys.insert(col);
-            block_others.erase(column_name);
+            /// Extract right keys with correct keys order. There could be the same key names.
+            if (!block_keys.has(column_name))
+            {
+                auto & col = block_others.getByName(column_name);
+                block_keys.insert(col);
+                block_others.erase(column_name);
+            }
         }
     }
 }
@@ -451,7 +469,7 @@ void splitAdditionalColumns(const Names & key_names, const Block & sample_block,
 
 
 NotJoined::NotJoined(const TableJoin & table_join, const Block & saved_block_sample_, const Block & right_sample_block,
-                     const Block & result_sample_block_, const Names & key_names_left_, const Names & key_names_right_)
+                     const Block & result_sample_block_, const NamesVector & key_names_left_, const NamesVector & key_names_right_)
     : saved_block_sample(saved_block_sample_)
     , result_sample_block(materializeBlock(result_sample_block_))
     , key_names_left(key_names_left_.empty() ? table_join.keyNamesLeft() : key_names_left_)
@@ -460,25 +478,40 @@ NotJoined::NotJoined(const TableJoin & table_join, const Block & saved_block_sam
     std::vector<String> tmp;
     Block right_table_keys;
     Block sample_block_with_columns_to_add;
+    Block required_right_keys;
 
-    JoinCommon::splitAdditionalColumns(key_names_right, right_sample_block, right_table_keys,
-                                       sample_block_with_columns_to_add);
-    Block required_right_keys = table_join.getRequiredRightKeys(right_table_keys, tmp);
+    bool multiple_disjuncts = table_join.keyNamesRight().size() > 1;
+    if (multiple_disjuncts)
+    {
+        // required_right_keys_sources concept does not work if multiple disjuncts
+        sample_block_with_columns_to_add = right_table_keys = materializeBlock(right_sample_block);
+    }
+    else
+    {
+        JoinCommon::splitAdditionalColumns(key_names_right, right_sample_block, right_table_keys,
+                                         sample_block_with_columns_to_add);
+        required_right_keys = table_join.getRequiredRightKeys(right_table_keys, tmp);
+    }
 
     std::unordered_map<size_t, size_t> left_to_right_key_remap;
 
     if (table_join.hasUsing())
     {
-        for (size_t i = 0; i < key_names_left.size(); ++i)
+        for (size_t p = 0; p < key_names_left.size(); ++p)
         {
-            const String & left_key_name = key_names_left[i];
-            const String & right_key_name = key_names_right[i];
+            for (size_t i = 0; i < key_names_left[p].size(); ++i)
+            {
+                const String & left_key_name = key_names_left[p][i];
+                const String & right_key_name = key_names_right[p][i];
 
-            size_t left_key_pos = result_sample_block.getPositionByName(left_key_name);
-            size_t right_key_pos = saved_block_sample.getPositionByName(right_key_name);
+                size_t left_key_pos = result_sample_block.getPositionByName(left_key_name);
+                size_t right_key_pos = saved_block_sample.getPositionByName(right_key_name);
 
-            if (!required_right_keys.has(right_key_name))
-                left_to_right_key_remap[left_key_pos] = right_key_pos;
+                if (!required_right_keys.has(right_key_name))
+                {
+                    left_to_right_key_remap[left_key_pos] = right_key_pos;
+                }
+            }
         }
     }
 

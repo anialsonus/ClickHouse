@@ -14,6 +14,7 @@ class TableJoin;
 class IColumn;
 using ColumnRawPtrs = std::vector<const IColumn *>;
 using UInt8ColumnDataPtr = const ColumnUInt8::Container *;
+using UInt8ColumnDataPtrVector = std::vector<UInt8ColumnDataPtr>;
 
 namespace JoinCommon
 {
@@ -21,6 +22,7 @@ bool canBecomeNullable(const DataTypePtr & type);
 DataTypePtr convertTypeToNullable(const DataTypePtr & type);
 void convertColumnToNullable(ColumnWithTypeAndName & column, bool remove_low_card = false);
 void convertColumnsToNullable(Block & block, size_t starting_pos = 0);
+void convertColumnsToNullable(MutableColumns & mutable_columns, size_t starting_pos = 0);
 void removeColumnNullability(ColumnWithTypeAndName & column);
 void changeColumnRepresentation(const ColumnPtr & src_column, ColumnPtr & dst_column);
 ColumnPtr emptyNotNullableClone(const ColumnPtr & column);
@@ -57,7 +59,7 @@ bool typesEqualUpToNullability(DataTypePtr left_type, DataTypePtr right_type);
 ColumnPtr getColumnAsMask(const Block & block, const String & column_name);
 
 /// Split key and other columns by keys name list
-void splitAdditionalColumns(const Names & key_names, const Block & sample_block, Block & block_keys, Block & block_others);
+void splitAdditionalColumns(const NamesVector & key_names, const Block & sample_block, Block & block_keys, Block & block_others);
 
 void changeLowCardinalityInplace(ColumnWithTypeAndName & column);
 
@@ -68,7 +70,7 @@ class NotJoined
 {
 public:
     NotJoined(const TableJoin & table_join, const Block & saved_block_sample_, const Block & right_sample_block,
-              const Block & result_sample_block_, const Names & key_names_left_ = {}, const Names & key_names_right_ = {});
+              const Block & result_sample_block_, const NamesVector & key_names_left_ = {}, const NamesVector & key_names_right_ = {});
 
     void correctLowcardAndNullability(MutableColumns & columns_right);
     void addLeftColumns(Block & block, size_t rows_added) const;
@@ -79,8 +81,8 @@ protected:
     Block saved_block_sample;
     Block result_sample_block;
 
-    Names key_names_left;
-    Names key_names_right;
+    NamesVector key_names_left;
+    NamesVector key_names_right;
 
     ~NotJoined() = default;
 
