@@ -199,7 +199,8 @@ HashJoin::HashJoin(std::shared_ptr<TableJoin> table_join_, const Block & right_s
     , log(&Poco::Logger::get("HashJoin"))
 {
     LOG_DEBUG(log, "Right sample block: {}", right_sample_block.dumpStructure());
-    bool multiple_disjuncts = key_names_right.size() > 1;
+    const size_t disjuncts_num = key_names_right.size();
+    const bool multiple_disjuncts = disjuncts_num > 1;
 
     if (multiple_disjuncts)
     {
@@ -222,7 +223,6 @@ HashJoin::HashJoin(std::shared_ptr<TableJoin> table_join_, const Block & right_s
     initRightBlockStructure(data->sample_block);
 
 
-    const size_t disjuncts_num = key_names_right.size();
     JoinCommon::createMissedColumns(sample_block_with_columns_to_add);
 
     if (table_join->dictionary_reader)
@@ -1901,6 +1901,9 @@ struct AdderNonJoined
 
 
 /// Stream from not joined earlier rows of the right table.
+///   Based on
+///      map' offsetInternal saved in used_flags for single disjuncts
+///      flags in BlockWithFlags for multiple disjuncts
 template<bool multiple_disjuncts>
 class NonJoinedBlockInputStream : private NotJoined, public IBlockInputStream
 {
