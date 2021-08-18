@@ -534,7 +534,7 @@ size_t HashJoin::getTotalRowCount() const
     if (data->type == Type::CROSS)
     {
         for (const auto & block : data->blocks)
-            res += block.block.rows();
+            res += block.rows();
     }
     else if (data->type != Type::DICT)
     {
@@ -554,7 +554,7 @@ size_t HashJoin::getTotalByteCount() const
     if (data->type == Type::CROSS)
     {
         for (const auto & block : data->blocks)
-            res += block.block.bytes();
+            res += block.bytes();
     }
     else if (data->type != Type::DICT)
     {
@@ -795,8 +795,12 @@ bool HashJoin::addJoinedBlock(const Block & source_block, bool check_limits)
             throw DB::Exception("addJoinedBlock called when HashJoin locked to prevent updates",
                                 ErrorCodes::LOGICAL_ERROR);
 
-        BlockWithFlags & stored_block_with_flags = data->blocks.emplace_back(std::move(structured_block));
-        Block * stored_block = &stored_block_with_flags.block;
+        // BlockWithFlags & stored_block_with_flags = data->blocks.emplace_back(std::move(structured_block));
+        // Block * stored_block = &stored_block_with_flags.block;
+
+        data->blocks.emplace_back(std::move(structured_block));
+        Block * stored_block = &data->blocks.back();
+
 
         if (rows)
             data->empty = false;
@@ -1680,10 +1684,8 @@ void HashJoin::joinBlockImplCross(Block & block, ExtraBlockPtr & not_processed) 
     for (size_t left_row = start_left_row; left_row < rows_left; ++left_row)
     {
         size_t block_number = 0;
-        for (const auto & block_wrapper : data->blocks)
+        for (const Block & block_right : data->blocks)
         {
-            const Block & block_right = block_wrapper.block;
-
             ++block_number;
             if (block_number < start_right_block)
                 continue;
@@ -1964,7 +1966,7 @@ private:
 
     std::any position;
     std::optional<HashJoin::BlockNullmapList::const_iterator> nulls_position;
-    std::optional<HashJoin::BlocksWithFlagsList::const_iterator> used_position;
+    std::optional<BlocksList::const_iterator> used_position;
 
     Block createBlock()
     {
@@ -2038,7 +2040,7 @@ private:
 
             for (auto & it = *used_position; it != end && rows_added < max_block_size; ++it)
             {
-                const Block & mapped_block = it->block;
+                const Block & mapped_block = *it;
 
                 for (size_t row = 0; row < mapped_block.rows(); ++row)
                 {
