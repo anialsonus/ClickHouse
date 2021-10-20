@@ -26,18 +26,19 @@ class IRowOutputFormat : public IOutputFormat
 public:
     using Params = RowOutputFormatParams;
 
-protected:
+private:
     DataTypes types;
     Serializations serializations;
     bool first_row = true;
 
+    bool prefix_written = false;
+    bool suffix_written = false;
+
+protected:
     void consume(Chunk chunk) override;
     void consumeTotals(Chunk chunk) override;
     void consumeExtremes(Chunk chunk) override;
     void finalize() override;
-
-    bool prefix_written = false;
-    bool suffix_written = false;
 
     void writePrefixIfNot()
     {
