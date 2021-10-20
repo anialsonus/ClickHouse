@@ -385,7 +385,6 @@ AvroRowOutputFormat::AvroRowOutputFormat(
     WriteBuffer & out_, const Block & header_, const RowOutputFormatParams & params_, const FormatSettings & settings_)
     : IRowOutputFormat(header_, out_, params_)
     , settings(settings_)
-    , params(params_)
     , serializer(header_.getColumnsWithTypeAndName(), std::make_unique<AvroSerializerTraits>(settings))
 {
 }
@@ -418,7 +417,7 @@ void AvroRowOutputFormat::writeSuffix()
 
 void AvroRowOutputFormat::consume(DB::Chunk chunk)
 {
-    if (params.callback)
+    if (hasCallBack())
         consumeImplWithCallback(std::move(chunk));
     else
         consumeImpl(std::move(chunk));
@@ -456,7 +455,7 @@ void AvroRowOutputFormat::consumeImplWithCallback(DB::Chunk chunk)
         file_writer_ptr->flush();
         writeSuffix();
 
-        params.callback(columns, num_rows);
+        callBack(columns, num_rows);
     }
 }
 

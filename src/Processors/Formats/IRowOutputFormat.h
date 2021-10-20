@@ -52,7 +52,7 @@ protected:
         suffix_written = true;
     }
 
-    bool isCallBack();
+    bool hasCallBack();
     void callBack(const Columns & columns, size_t row);
 
 public:

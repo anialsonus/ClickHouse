@@ -34,7 +34,7 @@ void IRowOutputFormat::consume(DB::Chunk chunk)
 
         write(columns, row);
 
-        if (isCallBack())
+        if (hasCallBack())
             callBack(columns, row);
 
         first_row = false;
@@ -113,14 +113,14 @@ void IRowOutputFormat::writeTotals(const DB::Columns & columns, size_t row_num)
     write(columns, row_num);
 }
 
-bool IRowOutputFormat::isCallBack()
+bool IRowOutputFormat::hasCallBack()
 {
     return static_cast<bool>(params.callback);
 }
 
 void IRowOutputFormat::callBack(const Columns & columns, size_t row)
 {
-    assert(isCallBack());
+    assert(hasCallBack());
     params.callback(columns, row);
 }
 
