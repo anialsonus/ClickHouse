@@ -34,8 +34,8 @@ void IRowOutputFormat::consume(DB::Chunk chunk)
 
         write(columns, row);
 
-        if (hasCallBack())
-            callBack(columns, row);
+        if (params.callback)
+            params.callback(columns, row);
 
         first_row = false;
     }
@@ -111,17 +111,6 @@ void IRowOutputFormat::writeMaxExtreme(const DB::Columns & columns, size_t row_n
 void IRowOutputFormat::writeTotals(const DB::Columns & columns, size_t row_num)
 {
     write(columns, row_num);
-}
-
-bool IRowOutputFormat::hasCallBack()
-{
-    return static_cast<bool>(params.callback);
-}
-
-void IRowOutputFormat::callBack(const Columns & columns, size_t row)
-{
-    assert(hasCallBack());
-    params.callback(columns, row);
 }
 
 }

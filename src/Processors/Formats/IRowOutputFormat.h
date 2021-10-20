@@ -23,6 +23,9 @@ class WriteBuffer;
   */
 class IRowOutputFormat : public IOutputFormat
 {
+public:
+    using Params = RowOutputFormatParams;
+
 protected:
     DataTypes types;
     Serializations serializations;
@@ -52,12 +55,9 @@ protected:
         suffix_written = true;
     }
 
-    bool hasCallBack();
-    void callBack(const Columns & columns, size_t row);
+    Params params;
 
 public:
-    using Params = RowOutputFormatParams;
-
     IRowOutputFormat(const Block & header, WriteBuffer & out_, const Params & params_);
 
     /** Write a row.
@@ -84,9 +84,6 @@ public:
     virtual void writeBeforeExtremes() {}
     virtual void writeAfterExtremes() {}
     virtual void writeLastSuffix() {}  /// Write something after resultset, totals end extremes.
-
-private:
-    Params params;
 
 };
 

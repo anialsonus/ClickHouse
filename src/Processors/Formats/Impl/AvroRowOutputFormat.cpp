@@ -417,7 +417,7 @@ void AvroRowOutputFormat::writeSuffix()
 
 void AvroRowOutputFormat::consume(DB::Chunk chunk)
 {
-    if (hasCallBack())
+    if (params.callback)
         consumeImplWithCallback(std::move(chunk));
     else
         consumeImpl(std::move(chunk));
@@ -455,7 +455,7 @@ void AvroRowOutputFormat::consumeImplWithCallback(DB::Chunk chunk)
         file_writer_ptr->flush();
         writeSuffix();
 
-        callBack(columns, num_rows);
+        params.callback(columns, num_rows);
     }
 }
 
