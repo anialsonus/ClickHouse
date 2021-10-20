@@ -27,14 +27,16 @@ public:
     using Params = RowOutputFormatParams;
 
 private:
-    DataTypes types;
-    Serializations serializations;
     bool first_row = true;
 
     bool prefix_written = false;
     bool suffix_written = false;
 
 protected:
+    DataTypes types;
+    Serializations serializations;
+    Params params;
+
     void consume(Chunk chunk) override;
     void consumeTotals(Chunk chunk) override;
     void consumeExtremes(Chunk chunk) override;
@@ -55,8 +57,6 @@ protected:
 
         suffix_written = true;
     }
-
-    Params params;
 
 public:
     IRowOutputFormat(const Block & header, WriteBuffer & out_, const Params & params_);
