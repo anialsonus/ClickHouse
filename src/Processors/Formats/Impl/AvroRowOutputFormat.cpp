@@ -433,7 +433,6 @@ void AvroRowOutputFormat::consumeImpl(DB::Chunk chunk)
     for (size_t row = 0; row < num_rows; ++row)
     {
         write(columns, row);
-        first_row = false;
     }
 
 }
@@ -458,7 +457,6 @@ void AvroRowOutputFormat::consumeImplWithCallback(DB::Chunk chunk)
         writeSuffix();
 
         params.callback(columns, num_rows);
-        first_row = false;
     }
 }
 

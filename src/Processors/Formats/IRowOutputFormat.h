@@ -52,6 +52,9 @@ protected:
         suffix_written = true;
     }
 
+    bool isCallBack();
+    void callBack(const Columns & columns, size_t row);
+
 public:
     using Params = RowOutputFormatParams;
 
