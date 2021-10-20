@@ -27,8 +27,6 @@ public:
     using Params = RowOutputFormatParams;
 
 private:
-    bool first_row = true;
-
     bool prefix_written = false;
     bool suffix_written = false;
 
@@ -36,6 +34,8 @@ protected:
     DataTypes types;
     Serializations serializations;
     Params params;
+
+    bool first_row = true;
 
     void consume(Chunk chunk) override;
     void consumeTotals(Chunk chunk) override;
