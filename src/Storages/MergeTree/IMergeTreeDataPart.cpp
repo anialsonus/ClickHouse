@@ -558,9 +558,14 @@ size_t IMergeTreeDataPart::getFileSizeOrZero(const String & file_name) const
     return checksum->second.file_size;
 }
 
-String IMergeTreeDataPart::getColumnNameWithMinimumCompressedSize(const StorageMetadataPtr & metadata_snapshot) const
+String IMergeTreeDataPart::getColumnNameWithMinimumCompressedSize(
+    const StorageSnapshotPtr & storage_snapshot, bool with_subcolumns) const
 {
-    const auto & storage_columns = metadata_snapshot->getColumns().getAllPhysical();
+    auto options = GetColumnsOptions(GetColumnsOptions::AllPhysical).withExtendedObjects();
+    if (with_subcolumns)
+        options.withSubcolumns();
+
+    auto storage_columns = storage_snapshot->getColumns(options);
     MergeTreeData::AlterConversions alter_conversions;
     if (!parent_part)
         alter_conversions = storage.getAlterConversionsForPart(shared_from_this());
