@@ -6,7 +6,7 @@
 namespace DB
 {
 
-using FunctionToStartOfYear = FunctionDateOrDateTimeToSomething<DataTypeDate, ToStartOfYearImpl>;
+using FunctionToStartOfYear = FunctionDateOrDateTimeToSomething</*DataTypeDate,*/ ToStartOfYearImpl>;
 
 void registerFunctionToStartOfYear(FunctionFactory & factory)
 {
@@ -14,5 +14,3 @@ void registerFunctionToStartOfYear(FunctionFactory & factory)
 }
 
 }
-
-

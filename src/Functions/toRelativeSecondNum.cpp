@@ -7,7 +7,7 @@
 namespace DB
 {
 
-using FunctionToRelativeSecondNum = FunctionDateOrDateTimeToSomething<DataTypeUInt32, ToRelativeSecondNumImpl>;
+using FunctionToRelativeSecondNum = FunctionDateOrDateTimeToSomething</*DataTypeUInt32,*/ ToRelativeSecondNumImpl>;
 
 void registerFunctionToRelativeSecondNum(FunctionFactory & factory)
 {
@@ -15,5 +15,3 @@ void registerFunctionToRelativeSecondNum(FunctionFactory & factory)
 }
 
 }
-
-

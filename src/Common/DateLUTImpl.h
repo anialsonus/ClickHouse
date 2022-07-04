@@ -377,6 +377,8 @@ public:
         const LUTIndex i = toLUTIndex(v);
         if constexpr (std::is_unsigned_v<DateOrTime> || std::is_same_v<DateOrTime, DayNum>)
             return toDayNum(LUTIndexWithSaturation(i - lut[i].day_of_month + lut[i].days_in_month));
+        // else if constexpr (std::is_same_v<DateOrTime, Int64>)
+        //     return toDayNum(LUTIndex(i - lut[i].day_of_month + lut[i].days_in_month) * 1000000);
         else
             return toDayNum(LUTIndex(i - lut[i].day_of_month + lut[i].days_in_month));
     }

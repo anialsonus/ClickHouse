@@ -7,7 +7,7 @@
 namespace DB
 {
 
-using FunctionToMinute = FunctionDateOrDateTimeToSomething<DataTypeUInt8, ToMinuteImpl>;
+using FunctionToMinute = FunctionDateOrDateTimeToSomething</*DataTypeUInt8,*/ ToMinuteImpl>;
 
 void registerFunctionToMinute(FunctionFactory & factory)
 {
@@ -17,5 +17,3 @@ void registerFunctionToMinute(FunctionFactory & factory)
 }
 
 }
-
-

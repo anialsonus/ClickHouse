@@ -6,7 +6,7 @@
 namespace DB
 {
 
-using FunctionToMonday = FunctionDateOrDateTimeToSomething<DataTypeDate, ToMondayImpl>;
+using FunctionToMonday = FunctionDateOrDateTimeToSomething</*DataTypeDate,*/ ToMondayImpl>;
 
 void registerFunctionToMonday(FunctionFactory & factory)
 {
@@ -14,5 +14,3 @@ void registerFunctionToMonday(FunctionFactory & factory)
 }
 
 }
-
-

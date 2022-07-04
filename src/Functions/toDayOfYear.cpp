@@ -7,7 +7,7 @@
 namespace DB
 {
 
-using FunctionToDayOfYear = FunctionDateOrDateTimeToSomething<DataTypeUInt16, ToDayOfYearImpl>;
+using FunctionToDayOfYear = FunctionDateOrDateTimeToSomething</*DataTypeUInt16,*/ ToDayOfYearImpl>;
 
 void registerFunctionToDayOfYear(FunctionFactory & factory)
 {
@@ -18,5 +18,3 @@ void registerFunctionToDayOfYear(FunctionFactory & factory)
 }
 
 }
-
-

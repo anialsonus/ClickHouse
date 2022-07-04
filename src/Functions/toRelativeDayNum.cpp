@@ -7,7 +7,7 @@
 namespace DB
 {
 
-using FunctionToRelativeDayNum = FunctionDateOrDateTimeToSomething<DataTypeUInt32, ToRelativeDayNumImpl>;
+using FunctionToRelativeDayNum = FunctionDateOrDateTimeToSomething</*DataTypeUInt32,*/ ToRelativeDayNumImpl>;
 
 void registerFunctionToRelativeDayNum(FunctionFactory & factory)
 {
@@ -15,5 +15,3 @@ void registerFunctionToRelativeDayNum(FunctionFactory & factory)
 }
 
 }
-
-

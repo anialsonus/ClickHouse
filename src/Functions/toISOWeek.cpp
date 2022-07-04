@@ -7,7 +7,7 @@
 namespace DB
 {
 
-using FunctionToISOWeek = FunctionDateOrDateTimeToSomething<DataTypeUInt8, ToISOWeekImpl>;
+using FunctionToISOWeek = FunctionDateOrDateTimeToSomething</*DataTypeUInt8,*/ ToISOWeekImpl>;
 
 void registerFunctionToISOWeek(FunctionFactory & factory)
 {
@@ -15,5 +15,3 @@ void registerFunctionToISOWeek(FunctionFactory & factory)
 }
 
 }
-
-

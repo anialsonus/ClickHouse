@@ -7,7 +7,7 @@
 namespace DB
 {
 
-using FunctionToQuarter = FunctionDateOrDateTimeToSomething<DataTypeUInt8, ToQuarterImpl>;
+using FunctionToQuarter = FunctionDateOrDateTimeToSomething</*DataTypeUInt8,*/ ToQuarterImpl>;
 
 void registerFunctionToQuarter(FunctionFactory & factory)
 {
@@ -17,5 +17,3 @@ void registerFunctionToQuarter(FunctionFactory & factory)
 }
 
 }
-
-

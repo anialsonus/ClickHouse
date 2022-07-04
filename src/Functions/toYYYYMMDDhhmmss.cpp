@@ -7,7 +7,7 @@
 namespace DB
 {
 
-using FunctionToYYYYMMDDhhmmss = FunctionDateOrDateTimeToSomething<DataTypeUInt64, ToYYYYMMDDhhmmssImpl>;
+using FunctionToYYYYMMDDhhmmss = FunctionDateOrDateTimeToSomething<ToYYYYMMDDhhmmssImpl/*, DataTypeUInt64*/>;
 
 void registerFunctionToYYYYMMDDhhmmss(FunctionFactory & factory)
 {
@@ -15,5 +15,3 @@ void registerFunctionToYYYYMMDDhhmmss(FunctionFactory & factory)
 }
 
 }
-
-

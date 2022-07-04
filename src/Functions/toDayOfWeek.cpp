@@ -7,7 +7,7 @@
 namespace DB
 {
 
-using FunctionToDayOfWeek = FunctionDateOrDateTimeToSomething<DataTypeUInt8, ToDayOfWeekImpl>;
+using FunctionToDayOfWeek = FunctionDateOrDateTimeToSomething</*DataTypeUInt8,*/ ToDayOfWeekImpl>;
 
 void registerFunctionToDayOfWeek(FunctionFactory & factory)
 {
@@ -18,5 +18,3 @@ void registerFunctionToDayOfWeek(FunctionFactory & factory)
 }
 
 }
-
-

@@ -6,7 +6,7 @@
 namespace DB
 {
 
-using FunctionToStartOfDay = FunctionDateOrDateTimeToSomething<DataTypeDateTime, ToStartOfDayImpl>;
+using FunctionToStartOfDay = FunctionDateOrDateTimeToSomething</*DataTypeDateTime,*/ ToStartOfDayImpl>;
 
 void registerFunctionToStartOfDay(FunctionFactory & factory)
 {
@@ -14,5 +14,3 @@ void registerFunctionToStartOfDay(FunctionFactory & factory)
 }
 
 }
-
-

@@ -6,7 +6,8 @@
 namespace DB
 {
 
-using FunctionToStartOfFiveMinute = FunctionDateOrDateTimeToSomething<DataTypeDateTime, ToStartOfFiveMinuteImpl>;
+// using FunctionToStartOfFiveMinute = FunctionDateOrDateTimeToSomething<DataTypeDateTime, ToStartOfFiveMinuteImpl>;
+using FunctionToStartOfFiveMinute = FunctionDateOrDateTimeToSomething</*DataTypeDateTime,*/ ToStartOfFiveMinuteImpl>;
 
 void registerFunctionToStartOfFiveMinute(FunctionFactory & factory)
 {
@@ -14,5 +15,3 @@ void registerFunctionToStartOfFiveMinute(FunctionFactory & factory)
 }
 
 }
-
-

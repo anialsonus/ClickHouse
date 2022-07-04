@@ -6,7 +6,7 @@
 namespace DB
 {
 
-using FunctionToStartOfMonth = FunctionDateOrDateTimeToSomething<DataTypeDate, ToStartOfMonthImpl>;
+using FunctionToStartOfMonth = FunctionDateOrDateTimeToSomething</*DataTypeDate,*/ ToStartOfMonthImpl>;
 
 void registerFunctionToStartOfMonth(FunctionFactory & factory)
 {
@@ -14,5 +14,3 @@ void registerFunctionToStartOfMonth(FunctionFactory & factory)
 }
 
 }
-
-

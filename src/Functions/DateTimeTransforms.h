@@ -13,6 +13,8 @@
 #include <DataTypes/DataTypeDateTime.h>
 #include <DataTypes/DataTypeDateTime64.h>
 
+#include <Common/logger_useful.h>
+
 
 namespace DB
 {
@@ -125,6 +127,10 @@ struct ToStartOfDayImpl
     {
         return time_zone.toDate(DayNum(d));
     }
+    static inline UInt32 execute(/*Int64*/DateTime64, const DateLUTImpl &)
+    {
+        throw Exception("Illegal type of argument for function " + std::string(name) + ", We do not properly understand type system", ErrorCodes::ILLEGAL_TYPE_OF_ARGUMENT);
+    }
 
     using FactorTransform = ZeroTransform;
 };
@@ -183,15 +189,30 @@ struct ToLastDayOfMonthImpl
 {
     static constexpr auto name = "toLastDayOfMonth";
 
-    static inline UInt16 execute(Int64 t, const DateLUTImpl & time_zone)
+    static inline Int32  /*Int64*/ /* UInt32 Int64*/ execute(Int64 t, const DateLUTImpl & time_zone)
+    {
+        auto ret = time_zone.toLastDayNumOfMonth(time_zone.toDayNum(t)) * 1000000;
+        LOG_DEBUG(&Poco::Logger::get("ToLastDayOfMonthImpl"), "ret: '{}'", ret);
+        return ret;
+    }
+    static inline Int32 /* UInt32 Int64*/ execute(const DecimalUtils::DecimalComponents<DateTime64> & t, const DateLUTImpl & time_zone)
+    {
+        auto ret = time_zone.toLastDayNumOfMonth(time_zone.toDayNum(t.whole));
+        LOG_DEBUG(&Poco::Logger::get("ToLastDayOfMonthImpl"), "ret: 'decimal components {}'", ret);
+        return ret;
+    }
+    // static inline DateTime64 execute(Int64 t, const DateLUTImpl time_zone)
+    // {
+    //     auto ret = time_zone.toLastDayNumOfMonth(time_zone.toDayNum(t));
+    //     LOG_DEBUG(&Poco::Logger::get("ToLastDayOfMonthImpl"), "ret: '{}'", ret);
+    //     return ret;
+    // }
+
+    static inline UInt32 execute(UInt32 t, const DateLUTImpl & time_zone)
     {
         return time_zone.toLastDayNumOfMonth(time_zone.toDayNum(t));
     }
-    static inline UInt16 execute(UInt32 t, const DateLUTImpl & time_zone)
-    {
-        return time_zone.toLastDayNumOfMonth(time_zone.toDayNum(t));
-    }
-    static inline UInt16 execute(Int32 d, const DateLUTImpl & time_zone)
+    static inline UInt32 execute(Int32 d, const DateLUTImpl & time_zone)
     {
         return time_zone.toLastDayNumOfMonth(ExtendedDayNum(d));
     }
@@ -274,6 +295,10 @@ struct ToTimeImpl
         return dateIsNotSupported(name);
     }
 
+    static inline UInt32 execute(/*Int64*/DateTime64, const DateLUTImpl &)
+    {
+        throw Exception("Illegal type of argument for function " + std::string(name) + ", We do not properly understand type system", ErrorCodes::ILLEGAL_TYPE_OF_ARGUMENT);
+    }
     using FactorTransform = ToDateImpl;
 };
 
@@ -289,7 +314,7 @@ struct ToStartOfMinuteImpl
     {
         return time_zone.toStartOfMinute(t);
     }
-    static inline UInt32 execute(Int32, const DateLUTImpl &)
+    static inline UInt64 execute(Int32, const DateLUTImpl &)
     {
         return dateIsNotSupported(name);
     }
@@ -298,6 +323,10 @@ struct ToStartOfMinuteImpl
         return dateIsNotSupported(name);
     }
 
+    static inline UInt32 execute(/*Int64*/DateTime64, const DateLUTImpl &)
+    {
+        throw Exception("Illegal type of argument for function " + std::string(name) + ", We do not properly understand type system", ErrorCodes::ILLEGAL_TYPE_OF_ARGUMENT);
+    }
     using FactorTransform = ZeroTransform;
 };
 
@@ -335,6 +364,10 @@ struct ToStartOfSecondImpl
     static inline UInt32 execute(UInt16, const DateLUTImpl &)
     {
         return dateIsNotSupported(name);
+    }
+    static inline UInt32 execute(/*Int64*/DateTime64, const DateLUTImpl &)
+    {
+        throw Exception("Illegal type of argument for function " + std::string(name) + ", We do not properly understand type system", ErrorCodes::ILLEGAL_TYPE_OF_ARGUMENT);
     }
 
     using FactorTransform = ZeroTransform;
@@ -383,6 +416,10 @@ struct ToStartOfMillisecondImpl
     {
         return dateIsNotSupported(name);
     }
+    static inline UInt32 execute(/*Int64*/DateTime64, const DateLUTImpl &)
+    {
+        throw Exception("Illegal type of argument for function " + std::string(name) + ", We do not properly understand type system", ErrorCodes::ILLEGAL_TYPE_OF_ARGUMENT);
+    }
 
     using FactorTransform = ZeroTransform;
 };
@@ -426,6 +463,10 @@ struct ToStartOfMicrosecondImpl
     {
         return dateIsNotSupported(name);
     }
+    static inline UInt32 execute(/*Int64*/DateTime64, const DateLUTImpl &)
+    {
+        throw Exception("Illegal type of argument for function " + std::string(name) + ", We do not properly understand type system", ErrorCodes::ILLEGAL_TYPE_OF_ARGUMENT);
+    }
 
     using FactorTransform = ZeroTransform;
 };
@@ -463,6 +504,10 @@ struct ToStartOfNanosecondImpl
     {
         return dateIsNotSupported(name);
     }
+    static inline UInt32 execute(/*Int64*/DateTime64, const DateLUTImpl &)
+    {
+        throw Exception("Illegal type of argument for function " + std::string(name) + ", We do not properly understand type system", ErrorCodes::ILLEGAL_TYPE_OF_ARGUMENT);
+    }
 
     using FactorTransform = ZeroTransform;
 };
@@ -486,6 +531,11 @@ struct ToStartOfFiveMinuteImpl
     static inline UInt32 execute(UInt16, const DateLUTImpl &)
     {
         return dateIsNotSupported(name);
+    }
+
+    static inline UInt32 execute(/*Int64*/DateTime64, const DateLUTImpl &)
+    {
+        throw Exception("Illegal type of argument for function " + std::string(name) + ", We do not properly understand type system", ErrorCodes::ILLEGAL_TYPE_OF_ARGUMENT);
     }
 
     using FactorTransform = ZeroTransform;
@@ -512,6 +562,11 @@ struct ToStartOfTenMinutesImpl
         return dateIsNotSupported(name);
     }
 
+    static inline UInt32 execute(/*Int64*/DateTime64, const DateLUTImpl &)
+    {
+        throw Exception("Illegal type of argument for function " + std::string(name) + ", We do not properly understand type system", ErrorCodes::ILLEGAL_TYPE_OF_ARGUMENT);
+    }
+
     using FactorTransform = ZeroTransform;
 };
 
@@ -534,6 +589,11 @@ struct ToStartOfFifteenMinutesImpl
     static inline UInt32 execute(UInt16, const DateLUTImpl &)
     {
         return dateIsNotSupported(name);
+    }
+
+    static inline UInt32 execute(/*Int64*/DateTime64, const DateLUTImpl &)
+    {
+        throw Exception("Illegal type of argument for function " + std::string(name) + ", We do not properly understand type system", ErrorCodes::ILLEGAL_TYPE_OF_ARGUMENT);
     }
 
     using FactorTransform = ZeroTransform;
@@ -564,6 +624,10 @@ struct TimeSlotImpl
     {
         return dateIsNotSupported(name);
     }
+    static inline UInt32 execute(/*Int64*/DateTime64, const DateLUTImpl &)
+    {
+        throw Exception("Illegal type of argument for function " + std::string(name) + ", We do not properly understand type system", ErrorCodes::ILLEGAL_TYPE_OF_ARGUMENT);
+    }
 
     using FactorTransform = ZeroTransform;
 };
@@ -590,6 +654,10 @@ struct ToStartOfHourImpl
     static inline UInt32 execute(UInt16, const DateLUTImpl &)
     {
         return dateIsNotSupported(name);
+    }
+    static inline UInt32 execute(/*Int64*/DateTime64, const DateLUTImpl &)
+    {
+        throw Exception("Illegal type of argument for function " + std::string(name) + ", We do not properly understand type system", ErrorCodes::ILLEGAL_TYPE_OF_ARGUMENT);
     }
 
     using FactorTransform = ZeroTransform;

@@ -7,7 +7,7 @@
 namespace DB
 {
 
-using FunctionToRelativeWeekNum = FunctionDateOrDateTimeToSomething<DataTypeUInt32, ToRelativeWeekNumImpl>;
+using FunctionToRelativeWeekNum = FunctionDateOrDateTimeToSomething</*DataTypeUInt32,*/ ToRelativeWeekNumImpl>;
 
 void registerFunctionToRelativeWeekNum(FunctionFactory & factory)
 {
@@ -15,5 +15,3 @@ void registerFunctionToRelativeWeekNum(FunctionFactory & factory)
 }
 
 }
-
-

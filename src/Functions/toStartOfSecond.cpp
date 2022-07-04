@@ -6,7 +6,7 @@
 namespace DB
 {
 
-using FunctionToStartOfSecond = FunctionDateOrDateTimeToSomething<DataTypeDateTime64, ToStartOfSecondImpl>;
+using FunctionToStartOfSecond = FunctionDateOrDateTimeToSomething</*DataTypeDateTime64,*/ ToStartOfSecondImpl>;
 
 void registerFunctionToStartOfSecond(FunctionFactory & factory)
 {

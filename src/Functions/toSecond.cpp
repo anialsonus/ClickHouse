@@ -7,7 +7,7 @@
 namespace DB
 {
 
-using FunctionToSecond = FunctionDateOrDateTimeToSomething<DataTypeUInt8, ToSecondImpl>;
+using FunctionToSecond = FunctionDateOrDateTimeToSomething</*DataTypeUInt8,*/ ToSecondImpl>;
 
 void registerFunctionToSecond(FunctionFactory & factory)
 {
@@ -17,5 +17,3 @@ void registerFunctionToSecond(FunctionFactory & factory)
 }
 
 }
-
-

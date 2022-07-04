@@ -8,7 +8,7 @@
 namespace DB
 {
 
-using FunctionTimeSlot = FunctionDateOrDateTimeToSomething<DataTypeDateTime, TimeSlotImpl>;
+using FunctionTimeSlot = FunctionDateOrDateTimeToSomething<TimeSlotImpl, DataTypeDateTime>;
 
 void registerFunctionTimeSlot(FunctionFactory & factory)
 {
@@ -16,5 +16,3 @@ void registerFunctionTimeSlot(FunctionFactory & factory)
 }
 
 }
-
-

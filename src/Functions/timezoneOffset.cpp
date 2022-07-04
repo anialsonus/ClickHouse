@@ -7,7 +7,7 @@
 namespace DB
 {
 
-using FunctiontimezoneOffset = FunctionDateOrDateTimeToSomething<DataTypeInt32, TimezoneOffsetImpl>;
+using FunctiontimezoneOffset = FunctionDateOrDateTimeToSomething</*DataTypeInt32,*/ TimezoneOffsetImpl>;
 
 void registerFunctiontimezoneOffset(FunctionFactory & factory)
 {
@@ -16,5 +16,3 @@ void registerFunctiontimezoneOffset(FunctionFactory & factory)
 }
 
 }
-
-

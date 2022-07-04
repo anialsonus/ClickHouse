@@ -6,7 +6,7 @@
 namespace DB
 {
 
-using FunctionToTime = FunctionDateOrDateTimeToSomething<DataTypeDateTime, ToTimeImpl>;
+using FunctionToTime = FunctionDateOrDateTimeToSomething</*DataTypeDateTime,*/ ToTimeImpl>;
 
 void registerFunctionToTime(FunctionFactory & factory)
 {
@@ -14,5 +14,3 @@ void registerFunctionToTime(FunctionFactory & factory)
 }
 
 }
-
-

@@ -7,7 +7,7 @@
 namespace DB
 {
 
-using FunctionToYear = FunctionDateOrDateTimeToSomething<DataTypeUInt16, ToYearImpl>;
+using FunctionToYear = FunctionDateOrDateTimeToSomething</*DataTypeUInt16,*/ ToYearImpl>;
 
 void registerFunctionToYear(FunctionFactory & factory)
 {
@@ -17,5 +17,3 @@ void registerFunctionToYear(FunctionFactory & factory)
 }
 
 }
-
-

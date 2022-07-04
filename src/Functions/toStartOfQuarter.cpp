@@ -6,7 +6,7 @@
 namespace DB
 {
 
-using FunctionToStartOfQuarter = FunctionDateOrDateTimeToSomething<DataTypeDate, ToStartOfQuarterImpl>;
+using FunctionToStartOfQuarter = FunctionDateOrDateTimeToSomething</*DataTypeDate,*/ ToStartOfQuarterImpl>;
 
 void registerFunctionToStartOfQuarter(FunctionFactory & factory)
 {
@@ -14,5 +14,3 @@ void registerFunctionToStartOfQuarter(FunctionFactory & factory)
 }
 
 }
-
-

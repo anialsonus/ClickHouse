@@ -7,7 +7,7 @@
 namespace DB
 {
 
-using FunctionToMonth = FunctionDateOrDateTimeToSomething<DataTypeUInt8, ToMonthImpl>;
+using FunctionToMonth = FunctionDateOrDateTimeToSomething</*DataTypeUInt8,*/ ToMonthImpl>;
 
 void registerFunctionToMonth(FunctionFactory & factory)
 {
@@ -17,5 +17,3 @@ void registerFunctionToMonth(FunctionFactory & factory)
 }
 
 }
-
-
