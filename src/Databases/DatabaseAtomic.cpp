@@ -321,6 +321,13 @@ void DatabaseAtomic::commitCreateTable(const ASTCreateQuery & query, const Stora
         /// It throws if `table_metadata_path` already exists (it's possible if table was detached)
         renameNoReplace(table_metadata_tmp_path, table_metadata_path);  /// Commit point (a sort of)
         attachTableUnlocked(query.getTable(), table);   /// Should never throw
+
+        if (true)
+        {
+            String table_metadata_path_drop = DatabaseCatalog::instance().getPathForDroppedMetadata(table->getStorageID());
+            fs::rename(table_metadata_path, table_metadata_path_drop);  /// Mark table as dropped
+        }
+
         table_name_to_path.emplace(query.getTable(), table_data_path);
     }
     catch (...)
