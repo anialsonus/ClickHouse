@@ -314,7 +314,7 @@ def test_address_and_port_threaded_concurrent_delete_and_create_user(started_clu
             args=(
                 node1,
                 0.66,
-                TEST_RUNS / 2,
+                TEST_RUNS,
             ),
         )
         thread_list.append(thread)
@@ -325,7 +325,7 @@ def test_address_and_port_threaded_concurrent_delete_and_create_user(started_clu
             args=(
                 node2,
                 1.1,
-                TEST_RUNS / 2,
+                TEST_RUNS,
             ),
         )
         thread_list.append(thread)
