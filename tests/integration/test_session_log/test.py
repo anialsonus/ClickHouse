@@ -2,14 +2,19 @@ import pytest
 import threading
 import time
 import sys
+import os
 
 from helpers.cluster import ClickHouseCluster
-
-cluster = ClickHouseCluster(__file__)
 
 TEST_RUNS = 25
 TEST_THREADS = 8
 TEST_HALF_THREADS = 4
+TEST_CLICKHOUSE_BENCHMARK_THREADS = 8
+TEST_CLICKHOUSE_BENCHMARK_TRIES = 64
+
+SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
+
+cluster = ClickHouseCluster(__file__)
 
 node1 = cluster.add_instance(
     "node1",
@@ -144,6 +149,20 @@ def run_phantom_queries_node(node, sleep_time, remote_node, times):
         )
 
         time.sleep(sleep_time)
+
+
+def run_benchmark(node, iterations, threads):
+    node.copy_file_to_container(os.path.join(SCRIPT_DIR, "queries.sql"), "/queries.sql")
+
+    node.exec_in_container(
+        [
+            "bash",
+            "-c",
+            f"/usr/bin/clickhouse benchmark --ignore-error --iterations {iterations} --concurrency {threads} < /queries.sql",
+        ],
+        user="root",
+        nothrow=True,
+    )
 
 
 def check_records():
@@ -369,6 +388,38 @@ def test_address_and_port_threaded_concurrent_delete_and_create_user(started_clu
 
         for thread in thread_list:
             thread.join()
+
+    flush_records()
+    check_records()
+
+
+def test_clickhouse_benchmark(started_cluster):
+    thread_list = []
+    thread = ThreadWithException(
+        target=run_benchmark,
+        args=(
+            node1,
+            TEST_CLICKHOUSE_BENCHMARK_TRIES,
+            TEST_CLICKHOUSE_BENCHMARK_THREADS,
+        ),
+    )
+
+    thread_list.append(thread)
+    thread.start()
+
+    thread = ThreadWithException(
+        target=run_benchmark,
+        args=(
+            node2,
+            TEST_CLICKHOUSE_BENCHMARK_TRIES,
+            TEST_CLICKHOUSE_BENCHMARK_THREADS,
+        ),
+    )
+    thread_list.append(thread)
+    thread.start()
+
+    for thread in thread_list:
+        thread.join()
 
     flush_records()
     check_records()
